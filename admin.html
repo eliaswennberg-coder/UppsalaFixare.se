@@ -556,6 +556,7 @@ async function renderSettings(v) {
 }
 
 // ---------- start ----------
+setInterval(() => { if (!document.hidden && S.user) loadInbox(S.tab === 'inbox'); }, 30000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden && S.user) { loadDay(); loadInbox(S.tab === 'inbox'); } });
 api('/api/login').then((d) => d.user ? start(d.user) : showLogin()).catch(() => showLogin());
 })();

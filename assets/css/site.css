@@ -263,3 +263,4 @@ form.lead-form{background:var(--paper);color:var(--ink);border-radius:22px;paddi
 .areas{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
 .areas span{background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.9rem}
 .bg-paper .areas span{background:var(--frost)}
+.contact-hint{grid-column:1/-1;margin:-8px 0 0;font-size:13px;color:var(--muted)}

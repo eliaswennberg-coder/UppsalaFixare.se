@@ -16,7 +16,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.png">
 <link rel="preload" href="/assets/fonts/familjen-grotesk-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/site.css?v=20261027">
 </head>
 <body>
 <a class="skip" href="#main">Hoppa till innehållet</a>
@@ -142,8 +142,9 @@
       <form class="lead-form" data-subject="Trädgård – ny offertförfrågan" data-button="Skicka offertförfrågan" novalidate>
         <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="field"><label for="t-namn">Namn</label><input id="t-namn" name="Namn" autocomplete="name" required></div>
-        <div class="field"><label for="t-tel">Telefon</label><input id="t-tel" name="Telefon" type="tel" autocomplete="tel" required></div>
-        <div class="field"><label for="t-mail">E-post <span class="opt">(valfritt)</span></label><input id="t-mail" name="E-post" type="email" autocomplete="email"></div>
+        <div class="field"><label for="t-tel">Telefon</label><input id="t-tel" name="Telefon" type="tel" autocomplete="tel" data-contact></div>
+        <div class="field"><label for="t-mail">E-post</label><input id="t-mail" name="E-post" type="email" autocomplete="email" data-contact></div>
+        <p class="contact-hint">Fyll i telefon <em>eller</em> e-post – det räcker med ett av dem.</p>
         <div class="field"><label for="t-adr">Område i Uppsala</label><input id="t-adr" name="Adress" autocomplete="street-address" placeholder="t.ex. Gottsunda"></div>
         <div class="field full"><label for="t-vad">Vad gäller det?</label>
           <select id="t-vad" name="Tjänst" required>
@@ -182,6 +183,6 @@
 </footer>
 
 <div class="call-bar"><a class="btn btn-dark" href="tel:+46727147200">Ring oss</a><a class="btn btn-primary" href="#offert">Gratis offert</a></div>
-<script src="/assets/js/site.js" defer></script>
+<script src="/assets/js/site.js?v=20261027" defer></script>
 </body>
 </html>

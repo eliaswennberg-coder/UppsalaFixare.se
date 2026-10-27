@@ -18,7 +18,7 @@
 <link rel="preload" href="/assets/fonts/familjen-grotesk-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="/assets/img/snow-hero-800.webp" media="(max-width:800px)">
 <link rel="preload" as="image" href="/assets/img/snow-hero.webp" media="(min-width:801px)">
-<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="stylesheet" href="/assets/css/site.css?v=20261027">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Hur fungerar RUT-avdraget?", "acceptedAnswer": {"@type": "Answer", "text": "Snöskottning vid din bostad ger rätt till RUT-avdrag på 50 % av arbetskostnaden. Vi drar avdraget direkt på fakturan och sköter ansökan hos Skatteverket. Du behöver bara ha RUT-utrymme kvar för året."}}, {"@type": "Question", "name": "Vad händer om det snöar flera dagar i rad?", "acceptedAnswer": {"@type": "Answer", "text": "Vi skottar en gång per dygn så länge det snöar och gränsen nås. Snö som faller under dagen tar vi med Premium på nästa morgonrunda."}}, {"@type": "Question", "name": "Vad händer om det knappt snöar i vinter?", "acceptedAnswer": {"@type": "Answer", "text": "Priset är fast. Det täcker att vi bevakar vädret varje dag och har en plats reserverad för dig hela vintern, oavsett hur mycket det snöar."}}, {"@type": "Question", "name": "Måste jag vara hemma?", "acceptedAnswer": {"@type": "Answer", "text": "Nej. Vi märker ut ytorna vid första besöket och kommer sedan automatiskt. Se bara till att bilar och lösa saker inte står i vägen."}}, {"@type": "Question", "name": "Ingår takskottning och bortforsling av snö?", "acceptedAnswer": {"@type": "Answer", "text": "Nej, men vi kan göra det som en separat beställning. Fråga oss när vi ringer upp."}}, {"@type": "Question", "name": "Kan jag få ett eget schema för skottningen?", "acceptedAnswer": {"@type": "Answer", "text": "Ja. Ska det vara klart före en viss tid, bara vissa dagar eller varje morgon oavsett snömängd så gör vi ett skräddarsytt schema. Skriv det i förfrågan så tar vi det när vi ringer upp."}}, {"@type": "Question", "name": "Hur lång är bindningstiden?", "acceptedAnswer": {"@type": "Answer", "text": "Avtalet gäller säsongen 1 november–31 mars. Flyttar du kan du säga upp det med 30 dagars varsel."}}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Service", "serviceType": "Snöskottning", "name": "Vinteravtal snöskottning i Uppsala", "provider": {"@id": "https://www.uppsalafixaren.se/#business"}, "areaServed": "Uppsala", "offers": [{"@type": "Offer", "name": "Standard", "price": "1299", "priceCurrency": "SEK", "description": "Från-pris per månad efter RUT"}, {"@type": "Offer", "name": "Premium", "price": "2499", "priceCurrency": "SEK", "description": "Från-pris per månad efter RUT"}]}</script>
 </head>
@@ -224,8 +224,10 @@
         <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <input type="hidden" name="Tjänst" value="Vinteravtal snöskottning">
         <div class="field"><label for="s-namn">Namn</label><input id="s-namn" name="Namn" autocomplete="name" required></div>
-        <div class="field"><label for="s-tel">Telefon</label><input id="s-tel" name="Telefon" type="tel" autocomplete="tel" required></div>
-        <div class="field full"><label for="s-adr">Adress</label><input id="s-adr" name="Adress" autocomplete="street-address" required placeholder="Gata och område i Uppsala"></div>
+        <div class="field"><label for="s-tel">Telefon</label><input id="s-tel" name="Telefon" type="tel" autocomplete="tel" data-contact></div>
+        <div class="field"><label for="s-mail">E-post</label><input id="s-mail" name="E-post" type="email" autocomplete="email" data-contact></div>
+        <p class="contact-hint">Fyll i telefon <em>eller</em> e-post – det räcker med ett av dem.</p>
+        <div class="field"><label for="s-adr">Adress</label><input id="s-adr" name="Adress" autocomplete="street-address" required placeholder="Gata och område i Uppsala"></div>
         <div class="field"><label for="s-paket">Paket</label>
           <select id="s-paket" name="Paket">
             <option value="Premium">Premium</option>
@@ -266,6 +268,6 @@
 </footer>
 
 <div class="call-bar"><a class="btn btn-dark" href="tel:+46727147200">Ring oss</a><a class="btn btn-primary" href="#offert">Säkra plats</a></div>
-<script src="/assets/js/site.js" defer></script>
+<script src="/assets/js/site.js?v=20261027" defer></script>
 </body>
 </html>

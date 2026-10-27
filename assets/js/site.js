@@ -84,10 +84,16 @@
 
   // Formulär – skickas direkt som mejl via FormSubmit
   document.querySelectorAll('form.lead-form').forEach(function (form) {
+    form.querySelectorAll('[data-contact]').forEach(function (i) {
+      i.addEventListener('input', function () { form.querySelectorAll('[data-contact]')[0].setCustomValidity(''); });
+    });
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var status = form.querySelector('.form-status');
       var submit = form.querySelector('button[type=submit]');
+      var contact = form.querySelectorAll('[data-contact]');
+      var anyContact = Array.prototype.some.call(contact, function (i) { return i.value.trim() !== ''; });
+      if (contact.length) contact[0].setCustomValidity(anyContact ? '' : 'Fyll i telefon eller e-post så vi kan nå dig.');
       if (!form.checkValidity()) { form.reportValidity(); return; }
       var data = {};
       new FormData(form).forEach(function (v, k) { data[k] = v; });

@@ -62,8 +62,16 @@ export default handler(async (req, res) => {
   if (b.sms && c.phone) {
     const s = await settings();
     const text = fill(mmsImage ? s.templatePhoto : s.templateNoPhoto, c, time);
-    const result = mmsImage ? await sendMms(c.phone, text, mmsImage) : await sendText(c.phone, text);
-    visit.sms = { ...smsStatus(result), to: c.phone, text, kind: mmsImage ? 'mms' : 'sms' };
+    let result = mmsImage ? await sendMms(c.phone, text, mmsImage) : await sendText(c.phone, text);
+    let kind = mmsImage ? 'mms' : 'sms';
+    let sent = text;
+    // Reserv: går inte bild-sms att skicka skickas ett vanligt sms med länk till bilden.
+    if (mmsImage && result.error && visit.photo) {
+      sent = fill(s.templateNoPhoto, c, time) + '\nBild: ' + visit.photo;
+      const fallback = await sendText(c.phone, sent);
+      if (!fallback.error) { visit.mmsError = result.error; result = fallback; kind = 'sms+länk'; }
+    }
+    visit.sms = { ...smsStatus(result), to: c.phone, text: sent, kind };
   } else {
     visit.sms = { status: 'off', note: c.phone ? 'Inget sms valt' : 'Inget telefonnummer' };
   }

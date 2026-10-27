@@ -309,7 +309,7 @@ function jobCard(c) {
   );
   if (visit) {
     const s = visit.sms || {};
-    const smsTxt = s.status === 'sent' ? (s.kind === 'mms' ? 'bild-sms skickat' : 'sms skickat')
+    const smsTxt = s.status === 'sent' ? (s.kind === 'mms' ? 'bild-sms skickat' : s.kind === 'sms+länk' ? 'sms med bildlänk skickat' : 'sms skickat')
       : s.status === 'off' ? (s.note || 'inget sms') : s.status === 'skipped' ? 'sms ej skickat: ' + s.note : 'sms misslyckades';
     card.append(el('div', { class: 'done-bar' },
       visit.photo ? el('a', { href: visit.photo, target: '_blank', rel: 'noopener' }, el('img', { src: visit.photo, alt: 'Foto', loading: 'lazy' })) : null,
@@ -380,7 +380,7 @@ async function confirmDone(c, photo) {
       S.visits[c.id] = d.visit; closeSheet(); render();
       const s = d.visit.sms || {};
       if (d.already) toast('Redan markerad som klar');
-      else if (s.status === 'sent') toast(`Klart! ${s.kind === 'mms' ? 'Bild-sms' : 'Sms'} skickat till ${c.name.split(' ')[0]}`);
+      else if (s.status === 'sent') toast(`Klart! ${s.kind === 'mms' ? 'Bild-sms' : s.kind === 'sms+länk' ? 'Sms med bildlänk' : 'Sms'} skickat till ${c.name.split(' ')[0]}`);
       else if (s.status === 'error') toast('Klart sparat, men sms:et misslyckades: ' + s.note, true);
       else if (s.status === 'skipped') toast('Klart sparat. Sms ej skickat: ' + s.note, true);
       else toast('Klart sparat');

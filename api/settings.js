@@ -1,6 +1,6 @@
 import {
   handler, send, body, requireUser, db, settings, hasRedis, elks, elksReady, sendText, smsStatus,
-  inboundKey, team, normPhone, HttpError,
+  inboundKey, team, normPhone, elksCheck, HttpError,
 } from './_lib.js';
 
 function baseUrl(req) {
@@ -20,6 +20,7 @@ export default handler(async (req, res) => {
         database: hasRedis() || !process.env.VERCEL,
         photos: !!process.env.BLOB_READ_WRITE_TOKEN,
         elks: elksReady(),
+        elksIssues: elksCheck(),
         from: process.env.ELKS_FROM || null,
         owner: process.env.OWNER_PHONE ? normPhone(process.env.OWNER_PHONE) : null,
         team: Object.values(team()),

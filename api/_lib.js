@@ -175,12 +175,24 @@ export function fill(tpl, c, time) {
 // ---------- 46elks ----------
 export const elksReady = () => !!(process.env.ELKS_USER && process.env.ELKS_PASS && process.env.ELKS_FROM);
 
+const env = (k) => String(process.env[k] || '').trim();
+
+export function elksCheck() {
+  const u = env('ELKS_USER'), p = env('ELKS_PASS');
+  const issues = [];
+  if (!u) issues.push('ELKS_USER saknas');
+  else if (!/^u[0-9a-f]{20,}$/i.test(u)) issues.push(`ELKS_USER ser fel ut (ska börja med "u" följt av en lång kod, är ${u.length} tecken)`);
+  if (!p) issues.push('ELKS_PASS saknas');
+  else if (!/^[0-9A-F]{20,}$/i.test(p)) issues.push(`ELKS_PASS ser ovanligt ut (${p.length} tecken) – kontrollera att det är API-lösenordet, inte inloggningslösenordet`);
+  return issues;
+}
+
 export async function elks(path, params, method = 'POST') {
-  if (!process.env.ELKS_USER || !process.env.ELKS_PASS) return { skipped: 'Inga 46elks-nycklar inlagda' };
+  if (!env('ELKS_USER') || !env('ELKS_PASS')) return { skipped: 'Inga 46elks-nycklar inlagda' };
   const r = await fetch('https://api.46elks.com/a1/' + path, {
     method,
     headers: {
-      Authorization: 'Basic ' + Buffer.from(process.env.ELKS_USER + ':' + process.env.ELKS_PASS).toString('base64'),
+      Authorization: 'Basic ' + Buffer.from(env('ELKS_USER') + ':' + env('ELKS_PASS')).toString('base64'),
       ...(params ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
     },
     body: params ? new URLSearchParams(params) : undefined,
@@ -192,12 +204,12 @@ export async function elks(path, params, method = 'POST') {
 
 export async function sendText(to, message) {
   if (!process.env.ELKS_FROM) return { skipped: 'ELKS_FROM saknas' };
-  return elks('sms', { from: process.env.ELKS_FROM, to: normPhone(to), message });
+  return elks('sms', { from: env('ELKS_FROM'), to: normPhone(to), message });
 }
 
 export async function sendMms(to, message, image) {
   if (!process.env.ELKS_FROM) return { skipped: 'ELKS_FROM saknas' };
-  return elks('mms', { from: process.env.ELKS_FROM, to: normPhone(to), message, image });
+  return elks('mms', { from: env('ELKS_FROM'), to: normPhone(to), message, image });
 }
 
 export function smsStatus(r) {

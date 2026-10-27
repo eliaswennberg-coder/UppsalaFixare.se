@@ -531,7 +531,7 @@ async function renderSettings(v) {
     el('section', { class: 'card status' }, el('h3', { style: 'font-size:16px;margin-bottom:6px' }, 'Status'), el('ul', {},
       item(s.database, 'Databas', s.database ? 'Kopplad' : 'Skapa Upstash Redis i Vercel → Storage'),
       item(s.photos, 'Bildlagring', s.photos ? 'Kopplad' : 'Skapa Blob (Public) i Vercel → Storage'),
-      item(s.elks, '46elks', s.elks ? 'Firmanummer: ' + s.from : 'Lägg in ELKS_USER, ELKS_PASS och ELKS_FROM'),
+      item(s.elks && !(s.elksIssues || []).length, '46elks', s.elks ? 'Firmanummer: ' + s.from + ((s.elksIssues || []).length ? ' · ' + s.elksIssues.join(' · ') : '') : 'Lägg in ELKS_USER, ELKS_PASS och ELKS_FROM'),
       item(!!s.owner, 'Vidarebefordra svar till', s.owner || 'Lägg in OWNER_PHONE (ditt mobilnummer)'),
       item(!!s.repliesConnected, 'Kundsvar kopplade', s.repliesConnected ? fmtWhen(s.repliesConnected) : 'Tryck på knappen nedan när 46elks är klart'),
       item(true, 'Team', s.team.join(', ')),

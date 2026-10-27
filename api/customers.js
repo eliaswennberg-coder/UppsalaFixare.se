@@ -16,6 +16,7 @@ function clean(input, old = {}) {
     order: Number.isFinite(+input.order) ? +input.order : 100,
     active: input.active !== false,
     sms: input.sms !== false,
+    photoLink: input.photoLink !== false,
   };
   if (!c.name) throw new HttpError(400, 'Namn saknas');
   if (!c.address) throw new HttpError(400, 'Adress saknas');

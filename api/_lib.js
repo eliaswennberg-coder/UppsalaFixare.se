@@ -158,7 +158,7 @@ export const validDate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ''));
 export const newId = () => crypto.randomBytes(6).toString('base64url');
 
 export const DEFAULT_SETTINGS = {
-  templatePhoto: 'Hej {namn}! Nu är det klart hos dig på {adress} (kl {tid}). Bild bifogad. Ha en fin dag! /UppsalaFixaren',
+  templatePhoto: 'Hej {namn}! Nu är det klart hos dig på {adress} (kl {tid}). Se bilden: {bild} /UppsalaFixaren',
   templateNoPhoto: 'Hej {namn}! Nu är det klart hos dig på {adress} (kl {tid}). Ha en fin dag! /UppsalaFixaren',
 };
 
@@ -167,9 +167,11 @@ export async function settings() {
   return { ...DEFAULT_SETTINGS, ...s };
 }
 
-export function fill(tpl, c, time) {
+export function fill(tpl, c, time, link) {
   const first = String(c.name || '').trim().split(/\s+/)[0] || '';
-  return tpl.replaceAll('{namn}', first).replaceAll('{adress}', c.address || '').replaceAll('{tid}', time);
+  let t = tpl.replaceAll('{namn}', first).replaceAll('{adress}', c.address || '').replaceAll('{tid}', time);
+  if (link) t = t.includes('{bild}') ? t.replaceAll('{bild}', link) : t + '\nBild: ' + link;
+  return t.replaceAll('{bild}', '').trim();
 }
 
 // ---------- 46elks ----------

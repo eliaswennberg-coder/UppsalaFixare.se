@@ -1,6 +1,6 @@
 import {
   handler, send, body, requireUser, db, parse, today, clock, validDate,
-  settings, fill, sendMms, sendText, smsStatus, HttpError,
+  settings, fill, sendText, smsStatus, newId, HttpError,
 } from './_lib.js';
 
 export const config = { maxDuration: 30 };
@@ -44,34 +44,33 @@ export default handler(async (req, res) => {
   const time = clock(now);
   const visit = { customerId: c.id, date, at: now.toISOString(), time, by: user, photo: null, note: String(b.note || '').slice(0, 300) };
 
-  let mmsImage = null;
   if (b.photo) {
     try {
       const p = await storePhoto(b.photo, c.id, date);
       visit.photo = p.url;
-      mmsImage = p.url || b.photo;
       if (p.note) visit.photoNote = p.note;
     } catch (e) {
       if (e.status === 400 || e.status === 413) throw e;
       console.error('blob', e);
       visit.photoNote = 'Bilden kunde inte sparas: ' + e.message;
-      mmsImage = b.photo;
     }
+  }
+
+  // Kort, egen länk till bilden: uppsalafixaren.se/b/<kod>
+  let link = null;
+  if (visit.photo && b.photoLink !== false) {
+    const code = newId();
+    await r.set('photo:' + code, visit.photo);
+    const host = req.headers['x-forwarded-host'] || req.headers.host || 'www.uppsalafixaren.se';
+    link = `${host.replace(/^www\./, '')}/b/${code}`;
+    visit.link = link;
   }
 
   if (b.sms && c.phone) {
     const s = await settings();
-    const text = fill(mmsImage ? s.templatePhoto : s.templateNoPhoto, c, time);
-    let result = mmsImage ? await sendMms(c.phone, text, mmsImage) : await sendText(c.phone, text);
-    let kind = mmsImage ? 'mms' : 'sms';
-    let sent = text;
-    // Reserv: går inte bild-sms att skicka skickas ett vanligt sms med länk till bilden.
-    if (mmsImage && result.error && visit.photo) {
-      sent = fill(s.templateNoPhoto, c, time) + '\nBild: ' + visit.photo;
-      const fallback = await sendText(c.phone, sent);
-      if (!fallback.error) { visit.mmsError = result.error; result = fallback; kind = 'sms+länk'; }
-    }
-    visit.sms = { ...smsStatus(result), to: c.phone, text: sent, kind };
+    const text = fill(link ? s.templatePhoto : s.templateNoPhoto, c, time, link);
+    const result = await sendText(c.phone, text);
+    visit.sms = { ...smsStatus(result), to: c.phone, text, kind: link ? 'sms+bild' : 'sms' };
   } else {
     visit.sms = { status: 'off', note: c.phone ? 'Inget sms valt' : 'Inget telefonnummer' };
   }

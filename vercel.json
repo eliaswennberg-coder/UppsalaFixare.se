@@ -27,5 +27,11 @@
   ],
   "regions": [
     "fra1"
+  ],
+  "rewrites": [
+    {
+      "source": "/b/:c",
+      "destination": "/api/photo?c=:c"
+    }
   ]
 }

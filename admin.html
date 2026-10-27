@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#13291b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fixaren">
+<link rel="icon" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<title>UppsalaFixaren Drift</title>
+<style>
+@font-face{font-family:"Familjen Grotesk";font-weight:600;font-display:swap;src:url(/assets/fonts/familjen-grotesk-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Familjen Grotesk";font-weight:700;font-display:swap;src:url(/assets/fonts/familjen-grotesk-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Hanken Grotesk";font-weight:400;font-display:swap;src:url(/assets/fonts/hanken-grotesk-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Hanken Grotesk";font-weight:600;font-display:swap;src:url(/assets/fonts/hanken-grotesk-latin-600-normal.woff2) format("woff2")}
+:root{
+  --forest:#13291b;--forest-2:#1d3a28;--moss:#4f7a5c;--brass:#c98a3a;--brass-dark:#a96f25;
+  --bg:#f4f6f3;--card:#fff;--ink:#16201a;--muted:#5b6a60;--line:#dde3dd;--ok:#2f7a4a;--ok-bg:#e6f2ea;--warn:#a5521b;--warn-bg:#fbeee2;--err:#b3261e;
+  --display:"Familjen Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --body:"Hanken Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:14px;color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0e1611;--card:#16211a;--ink:#e8eee9;--muted:#9aaba0;--line:#2a3a30;--ok:#7cc896;--ok-bg:#183223;--warn:#f0a868;--warn-bg:#33240f;--err:#ff8a80;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--body);-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--display);margin:0;letter-spacing:-.01em}
+a{color:inherit}
+.hidden{display:none!important}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+
+/* top */
+header.top{position:sticky;top:0;z-index:5;background:var(--forest);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 0 10px}
+header.top .wrap{display:flex;align-items:center;gap:10px}
+header.top h1{font-size:19px;flex:1}
+header.top h1 small{display:block;font:500 12px var(--body);opacity:.7;letter-spacing:0}
+.iconbtn{background:rgba(255,255,255,.12);border:0;border-radius:10px;width:40px;height:40px;display:grid;place-items:center;cursor:pointer;color:#fff}
+.iconbtn svg{width:20px;height:20px}
+
+/* bottom nav */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs .wrap{display:flex}
+nav.tabs button{flex:1;background:none;border:0;padding:9px 0 8px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;position:relative}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button[aria-current=page]{color:var(--moss)}
+.badge{position:absolute;top:4px;left:calc(50% + 6px);background:var(--brass);color:#fff;border-radius:99px;font-size:11px;min-width:18px;height:18px;padding:0 5px;display:grid;place-items:center}
+main{padding:14px 0 calc(90px + env(safe-area-inset-bottom))}
+
+/* common */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;text-decoration:none}
+.btn svg{width:18px;height:18px}
+.btn.primary{background:var(--brass);color:#fff}
+.btn.primary:active{background:var(--brass-dark)}
+.btn.dark{background:var(--forest);color:#fff}
+.btn.ghost{background:transparent;border:1px solid var(--line)}
+.btn.danger{background:transparent;border:1px solid var(--line);color:var(--err)}
+.btn[disabled]{opacity:.55;pointer-events:none}
+.row{display:flex;gap:8px;align-items:center}
+.grow{flex:1}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:6px 12px;font-size:14px;font-weight:600;white-space:nowrap;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--forest);border-color:var(--forest);color:#fff}
+.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:99px;padding:2px 8px;background:var(--bg);border:1px solid var(--line);color:var(--muted)}
+.empty{text-align:center;padding:40px 10px;color:var(--muted)}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:12px 0 4px}
+.in{width:100%;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:11px 12px;min-height:46px}
+textarea.in{min-height:84px;resize:vertical}
+.check{display:flex;gap:10px;align-items:center;margin-top:12px;font-weight:600}
+.check input{width:22px;height:22px;accent-color:var(--moss)}
+
+/* day */
+.daynav{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.daynav .lbl{flex:1;text-align:center;font-family:var(--display);font-weight:700;font-size:18px}
+.daynav .lbl small{display:block;font:500 12px var(--body);color:var(--muted)}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:4px 0 12px}
+.progress i{display:block;height:100%;background:var(--ok);border-radius:99px;transition:width .3s}
+.list{display:grid;gap:10px}
+.job h3{font-size:17px}
+.job .addr{font-size:15px;text-decoration:none;display:inline-flex;gap:4px;align-items:center;margin-top:2px}
+.job .addr svg{width:14px;height:14px;flex:none}
+.job .notes{font-size:14px;background:var(--bg);border-radius:10px;padding:8px 10px;margin-top:8px;white-space:pre-wrap}
+.job .acts{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin-top:12px}
+.job.done{border-color:color-mix(in srgb,var(--ok) 40%,var(--line))}
+.done-bar{display:flex;gap:10px;align-items:center;margin-top:10px;background:var(--ok-bg);border-radius:10px;padding:8px}
+.done-bar img{width:52px;height:52px;object-fit:cover;border-radius:8px;flex:none}
+.done-bar .t{flex:1;font-size:14px}
+.done-bar b{color:var(--ok)}
+.warn{color:var(--warn)}
+
+/* sheet */
+.sheet-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+.sheet h2{font-size:20px;margin-bottom:4px}
+.sheet .preview{width:100%;max-height:46vh;object-fit:contain;border-radius:12px;background:#000;margin-top:10px}
+.sheet .msg{background:var(--bg);border-radius:12px;padding:10px 12px;font-size:14px;white-space:pre-wrap;margin-top:8px}
+.sheet .foot{display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-top:16px}
+.hist{display:grid;gap:8px;margin-top:8px}
+.hist .h{display:flex;gap:10px;align-items:center;font-size:14px}
+.hist img{width:64px;height:64px;object-fit:cover;border-radius:8px;flex:none}
+
+/* inbox */
+.bubble{max-width:86%;border-radius:14px;padding:9px 12px;font-size:15px;white-space:pre-wrap}
+.bubble.in{background:var(--card);border:1px solid var(--line)}
+.bubble.out{background:var(--forest-2);color:#fff;margin-left:auto}
+.meta{font-size:12px;color:var(--muted);margin:2px 4px 0}
+.meta.r{text-align:right}
+
+/* login */
+.login{min-height:100vh;display:grid;place-items:center;background:var(--forest);padding:24px}
+.login .card{width:100%;max-width:340px;text-align:center;padding:24px}
+.login input{text-align:center;font-size:28px;letter-spacing:.4em}
+.err{color:var(--err);font-size:14px;min-height:20px;margin-top:8px}
+.status li{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--line);font-size:15px}
+.status ul{list-style:none;margin:0;padding:0}
+.status .dot{width:10px;height:10px;border-radius:99px;margin-top:7px;flex:none;background:var(--warn)}
+.status .dot.on{background:var(--ok)}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--forest);color:#fff;border-radius:12px;padding:11px 16px;z-index:30;font-weight:600;max-width:calc(100% - 32px);box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.toast.bad{background:var(--err)}
+.spin{width:18px;height:18px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:s .8s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<section id="login" class="login hidden">
+  <form class="card" id="loginForm">
+    <h1 style="font-size:24px">UppsalaFixaren</h1>
+    <p class="muted" style="margin:4px 0 16px">Drift · logga in med din PIN-kod</p>
+    <input class="in" id="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="12" aria-label="PIN-kod" required>
+    <button class="btn primary" style="width:100%;margin-top:12px">Logga in</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</section>
+
+<div id="app" class="hidden">
+  <header class="top"><div class="wrap">
+    <h1 id="title">Idag<small id="who"></small></h1>
+    <button class="iconbtn" id="refreshBtn" aria-label="Uppdatera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg></button>
+    <button class="iconbtn" id="settingsBtn" aria-label="Inställningar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div></header>
+
+  <main><div class="wrap" id="view"></div></main>
+
+  <nav class="tabs"><div class="wrap">
+    <button data-tab="today" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>Idag</button>
+    <button data-tab="customers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>Kunder</button>
+    <button data-tab="inbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Svar<span class="badge hidden" id="inboxBadge"></span></button>
+  </div></nav>
+</div>
+
+<input type="file" id="cam" accept="image/*" capture="environment" class="hidden">
+<div id="layer"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s);
+const ICON = {
+  pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+  cam: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>',
+  left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>',
+  right: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+};
+
+// Bygger DOM säkert: el('div', {class:'x'}, 'text', child)
+function el(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v == null || v === false) continue;
+    if (k === 'html') n.innerHTML = v; // bara för egna ikoner
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else if (k === 'class') n.className = v;
+    else n.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) n.append(c.nodeType ? c : String(c));
+  return n;
+}
+const iconBtn = (icon, text, cls, attrs = {}) => { const b = el(attrs.href ? 'a' : 'button', { class: 'btn ' + cls, ...attrs }); b.innerHTML = icon; if (text) b.append(text); return b; };
+
+const S = { user: null, tab: 'today', customers: [], visits: {}, date: null, today: null, area: 'Alla', inbox: [], unread: 0, search: '' };
+
+async function api(path, opts = {}) {
+  const r = await fetch(path, { credentials: 'same-origin', ...opts,
+    headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+    body: opts.body && typeof opts.body !== 'string' ? JSON.stringify(opts.body) : opts.body });
+  let data = {};
+  try { data = await r.json(); } catch {}
+  if (r.status === 401 && !path.startsWith('/api/login')) { showLogin(); throw new Error('Logga in igen'); }
+  if (!r.ok) throw new Error(data.error || 'Något gick fel (' + r.status + ')');
+  return data;
+}
+
+let toastT;
+function toast(msg, bad) {
+  document.querySelectorAll('.toast').forEach((t) => t.remove());
+  const t = el('div', { class: 'toast' + (bad ? ' bad' : ''), role: 'status' }, msg);
+  document.body.append(t);
+  clearTimeout(toastT); toastT = setTimeout(() => t.remove(), bad ? 6000 : 3500);
+}
+
+const fmtDate = (d) => new Date(d + 'T12:00:00').toLocaleDateString('sv-SE', { weekday: 'long', day: 'numeric', month: 'short' });
+const fmtWhen = (iso) => { const d = new Date(iso); return d.toLocaleDateString('sv-SE', { day: 'numeric', month: 'short' }) + ' ' + d.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' }); };
+const shiftDate = (d, n) => { const x = new Date(d + 'T12:00:00'); x.setDate(x.getDate() + n); return x.toLocaleDateString('sv-SE'); };
+const mapsUrl = (a) => 'https://maps.google.com/?q=' + encodeURIComponent(a + ', Uppsala');
+const byRoute = (a, b) => (a.order ?? 100) - (b.order ?? 100) || (a.area || '').localeCompare(b.area || '', 'sv') || a.name.localeCompare(b.name, 'sv');
+const areas = () => [...new Set(S.customers.map((c) => c.area).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'sv'));
+
+// ---------- login ----------
+function showLogin() { $('#app').classList.add('hidden'); $('#login').classList.remove('hidden'); setTimeout(() => $('#pin').focus(), 50); }
+$('#loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault(); $('#loginErr').textContent = '';
+  try { const d = await api('/api/login', { method: 'POST', body: { pin: $('#pin').value } }); $('#pin').value = ''; start(d.user); }
+  catch (err) { $('#loginErr').textContent = err.message; }
+});
+
+async function start(user) {
+  S.user = user;
+  $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
+  $('#who').textContent = 'Inloggad: ' + user;
+  await loadAll();
+}
+
+async function loadAll() {
+  try {
+    const [c, d] = await Promise.all([api('/api/customers'), api('/api/day' + (S.date ? '?date=' + S.date : ''))]);
+    S.customers = c.customers; S.visits = d.visits; S.date = d.date; S.today = d.today;
+    loadInbox(false);
+    render();
+  } catch (e) { toast(e.message, true); }
+}
+
+async function loadDay() {
+  try { const d = await api('/api/day?date=' + S.date); S.visits = d.visits; S.today = d.today; render(); } catch (e) { toast(e.message, true); }
+}
+
+async function loadInbox(markRead) {
+  try {
+    const d = await api('/api/inbox');
+    S.inbox = d.items; S.unread = d.unread;
+    if (markRead && d.unread) { await api('/api/inbox', { method: 'POST', body: { action: 'read' } }); S.unread = 0; }
+    const b = $('#inboxBadge'); b.textContent = S.unread; b.classList.toggle('hidden', !S.unread);
+    if (S.tab === 'inbox') render();
+  } catch {}
+}
+
+// ---------- navigation ----------
+document.querySelectorAll('nav.tabs button').forEach((b) => b.addEventListener('click', () => go(b.dataset.tab)));
+$('#settingsBtn').addEventListener('click', () => go('settings'));
+$('#refreshBtn').addEventListener('click', () => { loadAll(); toast('Uppdaterat'); });
+function go(tab) {
+  S.tab = tab;
+  document.querySelectorAll('nav.tabs button').forEach((b) => b.setAttribute('aria-current', b.dataset.tab === tab ? 'page' : 'false'));
+  if (tab === 'inbox') loadInbox(true);
+  render(); window.scrollTo(0, 0);
+}
+
+function render() {
+  const t = { today: 'Idag', customers: 'Kunder', inbox: 'Svar från kunder', settings: 'Inställningar' }[S.tab];
+  $('#title').firstChild.textContent = t;
+  const v = $('#view'); v.replaceChildren();
+  ({ today: renderToday, customers: renderCustomers, inbox: renderInbox, settings: renderSettings })[S.tab](v);
+}
+
+// ---------- IDAG ----------
+function renderToday(v) {
+  const active = S.customers.filter((c) => c.active !== false);
+  const list = active.filter((c) => S.area === 'Alla' || c.area === S.area).sort(byRoute);
+  const done = list.filter((c) => S.visits[c.id]);
+  const isToday = S.date === S.today;
+
+  v.append(el('div', { class: 'daynav' },
+    iconBtn(ICON.left, '', 'ghost', { 'aria-label': 'Föregående dag', onclick: () => { S.date = shiftDate(S.date, -1); loadDay(); } }),
+    el('div', { class: 'lbl' }, isToday ? 'Idag' : fmtDate(S.date), el('small', {}, isToday ? fmtDate(S.date) : S.date)),
+    iconBtn(ICON.right, '', 'ghost', { 'aria-label': 'Nästa dag', onclick: () => { S.date = shiftDate(S.date, 1); loadDay(); } }),
+  ));
+
+  if (!active.length) {
+    v.append(el('div', { class: 'empty' }, el('p', {}, 'Inga kunder än.'), iconBtn(ICON.plus, 'Lägg till första kunden', 'primary', { onclick: () => editCustomer() })));
+    return;
+  }
+
+  const ar = areas();
+  if (ar.length > 1) v.append(el('div', { class: 'chips' }, ['Alla', ...ar].map((a) =>
+    el('button', { class: 'chip', 'aria-pressed': String(S.area === a), onclick: () => { S.area = a; render(); } }, a))));
+
+  v.append(el('div', { class: 'row small' }, el('b', {}, `${done.length} av ${list.length} klara`), el('span', { class: 'grow' }), done.length === list.length && list.length ? el('span', { class: 'pill' }, 'Allt klart 🎉') : null));
+  const pct = list.length ? (done.length / list.length) * 100 : 0;
+  v.append(el('div', { class: 'progress' }, el('i', { style: `width:${pct}%` })));
+
+  const todo = list.filter((c) => !S.visits[c.id]);
+  v.append(el('div', { class: 'list' }, [...todo, ...done].map(jobCard)));
+}
+
+function jobCard(c) {
+  const visit = S.visits[c.id];
+  const card = el('article', { class: 'card job' + (visit ? ' done' : '') },
+    el('div', { class: 'row' }, el('h3', { class: 'grow' }, c.name), el('span', { class: 'pill' }, [c.plan, c.size].filter(Boolean).join(' · '))),
+    el('a', { class: 'addr muted', href: mapsUrl(c.address), target: '_blank', rel: 'noopener', html: ICON.pin }, c.address + (c.area ? ' · ' + c.area : '')),
+    c.notes ? el('div', { class: 'notes' }, c.notes) : null,
+  );
+  if (visit) {
+    const s = visit.sms || {};
+    const smsTxt = s.status === 'sent' ? (s.kind === 'mms' ? 'bild-sms skickat' : 'sms skickat')
+      : s.status === 'off' ? (s.note || 'inget sms') : s.status === 'skipped' ? 'sms ej skickat: ' + s.note : 'sms misslyckades';
+    card.append(el('div', { class: 'done-bar' },
+      visit.photo ? el('a', { href: visit.photo, target: '_blank', rel: 'noopener' }, el('img', { src: visit.photo, alt: 'Foto', loading: 'lazy' })) : null,
+      el('div', { class: 't' }, el('b', {}, `Klart ${visit.time}`), ` · ${visit.by}`, el('br'), el('span', { class: s.status === 'error' || s.status === 'skipped' ? 'warn' : 'muted' }, smsTxt)),
+      el('button', { class: 'btn ghost', style: 'min-height:38px;padding:6px 10px', onclick: () => undo(c, visit) }, 'Ångra'),
+    ));
+  } else {
+    card.append(el('div', { class: 'acts' },
+      iconBtn(ICON.cam, 'Klart + foto', 'primary', { onclick: () => takePhoto(c) }),
+      iconBtn(ICON.check, '', 'dark', { 'aria-label': 'Klart utan foto', title: 'Klart utan foto', onclick: () => confirmDone(c, null) }),
+      c.phone ? iconBtn(ICON.phone, '', 'ghost', { href: 'tel:' + c.phone, 'aria-label': 'Ring ' + c.name }) : el('span'),
+    ));
+  }
+  return card;
+}
+
+let pendingCustomer = null;
+function takePhoto(c) { pendingCustomer = c; const cam = $('#cam'); cam.value = ''; cam.click(); }
+$('#cam').addEventListener('change', async (e) => {
+  const f = e.target.files[0]; if (!f || !pendingCustomer) return;
+  const c = pendingCustomer; pendingCustomer = null;
+  try { const data = await compress(f); confirmDone(c, data); } catch (err) { toast('Kunde inte läsa bilden: ' + err.message, true); }
+});
+
+// Krymper bilden så att bild-sms:et håller sig under 46elks gräns (320 kB).
+async function compress(file) {
+  let src;
+  try { src = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+  catch { src = await new Promise((ok, bad) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => bad(new Error('okänt bildformat')); i.src = URL.createObjectURL(file); }); }
+  const w0 = src.width, h0 = src.height;
+  let max = 1280, q = 0.72, blob;
+  for (let i = 0; i < 8; i++) {
+    const s = Math.min(1, max / Math.max(w0, h0));
+    const cv = document.createElement('canvas'); cv.width = Math.round(w0 * s); cv.height = Math.round(h0 * s);
+    cv.getContext('2d').drawImage(src, 0, 0, cv.width, cv.height);
+    blob = await new Promise((r) => cv.toBlob(r, 'image/jpeg', q));
+    if (blob.size <= 210000) break;
+    if (q > 0.5) q -= 0.08; else max = Math.round(max * 0.82);
+  }
+  return await new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(blob); });
+}
+
+let settingsCache = null;
+async function getSettings() { if (!settingsCache) settingsCache = (await api('/api/settings')).settings; return settingsCache; }
+const fillTpl = (tpl, c) => tpl.replaceAll('{namn}', (c.name || '').split(/\s+/)[0]).replaceAll('{adress}', c.address || '')
+  .replaceAll('{tid}', new Date().toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' }));
+
+async function confirmDone(c, photo) {
+  let st = {}; try { st = await getSettings(); } catch {}
+  const canSms = !!c.phone;
+  const smsBox = el('input', { type: 'checkbox', checked: canSms && c.sms !== false, disabled: !canSms });
+  const msg = el('div', { class: 'msg' }, fillTpl(photo ? st.templatePhoto || '' : st.templateNoPhoto || '', c));
+  const updateMsg = () => msg.classList.toggle('hidden', !smsBox.checked);
+  smsBox.addEventListener('change', updateMsg); updateMsg();
+  const note = el('input', { class: 'in', placeholder: 'Intern anteckning (valfritt)', maxlength: 300 });
+  const go = iconBtn(ICON.check, 'Markera klart', 'primary');
+  const sheet = openSheet(
+    el('h2', {}, c.name), el('div', { class: 'muted' }, c.address),
+    photo ? el('img', { class: 'preview', src: photo, alt: 'Förhandsvisning' }) : el('p', { class: 'muted small' }, 'Utan foto.'),
+    el('label', { class: 'check' }, smsBox, canSms ? `Skicka ${photo ? 'bild-sms' : 'sms'} till ${c.phone}` : 'Inget telefonnummer – inget sms'),
+    msg, note,
+    el('div', { class: 'foot' }, el('button', { class: 'btn ghost', onclick: () => closeSheet() }, 'Avbryt'), go),
+  );
+  go.addEventListener('click', async () => {
+    go.disabled = true; go.replaceChildren(el('span', { class: 'spin' }), 'Skickar…');
+    try {
+      const d = await api('/api/klart', { method: 'POST', body: { customerId: c.id, date: S.date, photo, sms: smsBox.checked, note: note.value } });
+      S.visits[c.id] = d.visit; closeSheet(); render();
+      const s = d.visit.sms || {};
+      if (d.already) toast('Redan markerad som klar');
+      else if (s.status === 'sent') toast(`Klart! ${s.kind === 'mms' ? 'Bild-sms' : 'Sms'} skickat till ${c.name.split(' ')[0]}`);
+      else if (s.status === 'error') toast('Klart sparat, men sms:et misslyckades: ' + s.note, true);
+      else if (s.status === 'skipped') toast('Klart sparat. Sms ej skickat: ' + s.note, true);
+      else toast('Klart sparat');
+      if (d.visit.photoNote) setTimeout(() => toast(d.visit.photoNote, true), 3600);
+    } catch (e) { toast(e.message, true); go.disabled = false; go.replaceChildren('Försök igen'); }
+  });
+  return sheet;
+}
+
+async function undo(c, visit) {
+  if (!confirm(`Ångra "klart" för ${c.name}? Ett skickat sms går inte att ta tillbaka.`)) return;
+  try { await api(`/api/klart?customerId=${encodeURIComponent(c.id)}&date=${visit.date}`, { method: 'DELETE' }); delete S.visits[c.id]; render(); }
+  catch (e) { toast(e.message, true); }
+}
+
+// ---------- sheet ----------
+function openSheet(...kids) {
+  closeSheet();
+  const sh = el('div', { class: 'sheet', role: 'dialog', 'aria-modal': 'true' }, ...kids);
+  const bg = el('div', { class: 'sheet-bg', onclick: (e) => { if (e.target === bg) closeSheet(); } }, sh);
+  $('#layer').append(bg); document.body.style.overflow = 'hidden';
+  return sh;
+}
+function closeSheet() { $('#layer').replaceChildren(); document.body.style.overflow = ''; }
+
+// ---------- KUNDER ----------
+function renderCustomers(v) {
+  const q = el('input', { class: 'in', type: 'search', placeholder: 'Sök namn, adress, telefon…', value: S.search });
+  const listBox = el('div', { class: 'list', style: 'margin-top:12px' });
+  const draw = () => {
+    S.search = q.value; const s = q.value.toLowerCase();
+    const list = S.customers.filter((c) => !s || [c.name, c.address, c.phone, c.area].join(' ').toLowerCase().includes(s)).sort(byRoute);
+    listBox.replaceChildren(...(list.length ? list.map((c) => el('button', { class: 'card', style: 'text-align:left;cursor:pointer;width:100%', onclick: () => editCustomer(c) },
+      el('div', { class: 'row' }, el('b', { class: 'grow' }, c.name), c.active === false ? el('span', { class: 'pill' }, 'Pausad') : el('span', { class: 'pill' }, c.plan)),
+      el('div', { class: 'muted small' }, [c.address, c.area, c.phone].filter(Boolean).join(' · ')),
+    )) : [el('div', { class: 'empty' }, S.customers.length ? 'Ingen träff.' : 'Inga kunder än.')]));
+  };
+  q.addEventListener('input', draw);
+  v.append(el('div', { class: 'row' }, el('div', { class: 'grow' }, q), iconBtn(ICON.plus, 'Ny', 'primary', { onclick: () => editCustomer() })));
+  v.append(el('p', { class: 'muted small', style: 'margin:8px 2px 0' }, `${S.customers.filter((c) => c.active !== false).length} aktiva kunder`));
+  v.append(listBox); draw();
+}
+
+const AREA_SUGGEST = ['Sunnersta', 'Nåntuna', 'Vilan', 'Sävja', 'Valsätra', 'Norby', 'Kåbo', 'Gottsunda', 'Ultuna'];
+const PLANS = ['Standard', 'Premium', 'Flex', 'Skräddarsytt', 'Period', 'Trädgård', 'Övrigt'];
+
+async function editCustomer(c) {
+  const isNew = !c; c = c || { plan: 'Standard', order: 100, active: true, sms: true };
+  const f = {};
+  const field = (key, label, input) => { f[key] = input; return [el('label', { class: 'f' }, label), input]; };
+  const dl = el('datalist', { id: 'areasDl' }, [...new Set([...areas(), ...AREA_SUGGEST])].map((a) => el('option', { value: a })));
+  const planSel = el('select', { class: 'in' }, PLANS.map((p) => el('option', { value: p, selected: p === c.plan }, p)));
+  const histBox = el('div', { class: 'hist' });
+  const sheet = openSheet(
+    el('h2', {}, isNew ? 'Ny kund' : c.name),
+    field('name', 'Namn', el('input', { class: 'in', value: c.name || '', autocomplete: 'off', required: true })),
+    field('phone', 'Mobilnummer', el('input', { class: 'in', type: 'tel', value: c.phone || '', placeholder: '070-123 45 67' })),
+    field('address', 'Adress', el('input', { class: 'in', value: c.address || '', placeholder: 'Fasanvägen 14a' })),
+    field('area', 'Område', el('input', { class: 'in', value: c.area || '', list: 'areasDl' })), dl,
+    el('div', { class: 'row' },
+      el('div', { class: 'grow' }, field('plan', 'Paket', planSel)),
+      el('div', { class: 'grow' }, field('size', 'Storlek', el('input', { class: 'in', value: c.size || '', placeholder: 'Stor / 60 m²' }))),
+      el('div', { style: 'width:84px' }, field('order', 'Rutt nr', el('input', { class: 'in', type: 'number', value: c.order ?? 100 })))),
+    field('notes', 'Anteckningar (portkod, var snön ska läggas, bil m.m.)', el('textarea', { class: 'in' }, c.notes || '')),
+    el('label', { class: 'check' }, f.sms = el('input', { type: 'checkbox', checked: c.sms !== false }), 'Skicka klart-sms till kunden'),
+    el('label', { class: 'check' }, f.active = el('input', { type: 'checkbox', checked: c.active !== false }), 'Aktiv kund (syns på dagens lista)'),
+    el('div', { class: 'foot' }, el('button', { class: 'btn ghost', onclick: () => closeSheet() }, 'Avbryt'), el('button', { class: 'btn primary', id: 'saveC' }, 'Spara')),
+    isNew ? null : el('div', { style: 'margin-top:20px' },
+      el('h3', { style: 'font-size:16px' }, 'Historik'), histBox,
+      el('div', { class: 'row', style: 'margin-top:16px' },
+        c.phone ? iconBtn(ICON.phone, 'Ring', 'ghost', { href: 'tel:' + c.phone }) : null,
+        el('span', { class: 'grow' }),
+        el('button', { class: 'btn danger', onclick: () => removeCustomer(c) }, 'Ta bort kund'))),
+  );
+  $('#saveC', sheet).addEventListener('click', async (e) => {
+    const b = e.currentTarget; b.disabled = true;
+    try {
+      const body = { id: c.id, name: f.name.value, phone: f.phone.value, address: f.address.value, area: f.area.value, plan: planSel.value,
+        size: f.size.value, order: f.order.value, notes: f.notes.value, sms: f.sms.checked, active: f.active.checked };
+      const d = await api('/api/customers', { method: 'POST', body });
+      const i = S.customers.findIndex((x) => x.id === d.customer.id);
+      if (i >= 0) S.customers[i] = d.customer; else S.customers.push(d.customer);
+      closeSheet(); render(); toast(isNew ? 'Kund tillagd' : 'Sparat');
+    } catch (err) { toast(err.message, true); b.disabled = false; }
+  });
+  if (!isNew) {
+    histBox.append(el('p', { class: 'muted small' }, 'Laddar…'));
+    try {
+      const d = await api('/api/customers?id=' + encodeURIComponent(c.id));
+      histBox.replaceChildren(...(d.history.length ? d.history.map((h) => el('div', { class: 'h' },
+        h.photo ? el('a', { href: h.photo, target: '_blank', rel: 'noopener' }, el('img', { src: h.photo, alt: 'Foto ' + h.date, loading: 'lazy' })) : null,
+        el('div', {}, el('b', {}, h.date + ' ' + h.time), ' · ' + h.by, el('br'),
+          el('span', { class: 'muted small' }, h.sms?.status === 'sent' ? 'sms skickat' : h.sms?.note || ''), h.note ? el('div', { class: 'small' }, h.note) : null),
+      )) : [el('p', { class: 'muted small' }, 'Inga besök än.')]));
+    } catch (e) { histBox.replaceChildren(el('p', { class: 'warn small' }, e.message)); }
+  }
+}
+
+async function removeCustomer(c) {
+  if (!confirm(`Ta bort ${c.name}? Historiken med foton finns kvar men kunden försvinner från listorna.`)) return;
+  try { await api('/api/customers?id=' + encodeURIComponent(c.id), { method: 'DELETE' }); S.customers = S.customers.filter((x) => x.id !== c.id); closeSheet(); render(); toast('Borttagen'); }
+  catch (e) { toast(e.message, true); }
+}
+
+// ---------- SVAR ----------
+function renderInbox(v) {
+  if (!S.inbox.length) { v.append(el('div', { class: 'empty' }, 'Inga svar än. När en kund svarar på ett sms hamnar det här.')); return; }
+  const box = el('div', { style: 'display:grid;gap:12px' });
+  for (const m of S.inbox) {
+    const who = m.name || (m.dir === 'in' ? m.from : m.to);
+    box.append(el('div', {},
+      el('div', { class: 'bubble ' + m.dir, onclick: m.dir === 'in' ? () => reply(m) : null, style: m.dir === 'in' ? 'cursor:pointer' : null },
+        m.message || '[bild]', m.image ? el('div', {}, el('a', { href: m.image, target: '_blank', rel: 'noopener' }, 'Visa bild')) : null),
+      el('div', { class: 'meta' + (m.dir === 'out' ? ' r' : '') },
+        m.dir === 'in' ? `${who}${m.address ? ' · ' + m.address : ''} · ${fmtWhen(m.at)} · tryck för att svara` : `Till ${who} · ${m.by} · ${fmtWhen(m.at)}${m.sms?.status !== 'sent' ? ' · ej skickat' : ''}`),
+    ));
+  }
+  v.append(box);
+}
+
+function reply(m) {
+  const ta = el('textarea', { class: 'in', placeholder: 'Skriv svar…', maxlength: 600 });
+  const sendB = el('button', { class: 'btn primary' }, 'Skicka');
+  openSheet(el('h2', {}, 'Svara ' + (m.name || m.from)), el('div', { class: 'msg' }, m.message || '[bild]'), el('label', { class: 'f' }, 'Ditt svar (skickas från firmans nummer)'), ta,
+    el('div', { class: 'foot' }, el('button', { class: 'btn ghost', onclick: () => closeSheet() }, 'Avbryt'), sendB),
+    m.from ? el('p', { class: 'small muted', style: 'margin-top:12px' }, 'Eller ', el('a', { href: 'tel:' + m.from }, 'ring ' + m.from)) : null);
+  setTimeout(() => ta.focus(), 50);
+  sendB.addEventListener('click', async () => {
+    sendB.disabled = true;
+    try { const d = await api('/api/inbox', { method: 'POST', body: { action: 'reply', to: m.from, message: ta.value, customerId: m.customerId, name: m.name } });
+      S.inbox.unshift(d.entry); closeSheet(); render(); toast(d.entry.sms.status === 'sent' ? 'Skickat' : 'Ej skickat: ' + d.entry.sms.note, d.entry.sms.status !== 'sent'); }
+    catch (e) { toast(e.message, true); sendB.disabled = false; }
+  });
+}
+
+// ---------- INSTÄLLNINGAR ----------
+async function renderSettings(v) {
+  v.append(el('p', { class: 'muted' }, 'Laddar…'));
+  let d; try { d = await api('/api/settings'); } catch (e) { v.replaceChildren(el('p', { class: 'warn' }, e.message)); return; }
+  settingsCache = d.settings;
+  const s = d.status;
+  const item = (on, txt, sub) => el('li', {}, el('span', { class: 'dot' + (on ? ' on' : '') }), el('div', {}, txt, sub ? el('div', { class: 'small muted' }, sub) : null));
+  const tp = el('textarea', { class: 'in' }, d.settings.templatePhoto);
+  const tn = el('textarea', { class: 'in' }, d.settings.templateNoPhoto);
+  const connectB = el('button', { class: 'btn dark', disabled: !s.elks }, s.repliesConnected ? 'Koppla om svar' : 'Koppla kundsvar till appen');
+  const testB = el('button', { class: 'btn ghost', disabled: !s.elks || !s.owner }, 'Skicka test-sms till mig');
+  v.replaceChildren(
+    el('section', { class: 'card status' }, el('h3', { style: 'font-size:16px;margin-bottom:6px' }, 'Status'), el('ul', {},
+      item(s.database, 'Databas', s.database ? 'Kopplad' : 'Skapa Upstash Redis i Vercel → Storage'),
+      item(s.photos, 'Bildlagring', s.photos ? 'Kopplad' : 'Skapa Blob (Public) i Vercel → Storage'),
+      item(s.elks, '46elks', s.elks ? 'Firmanummer: ' + s.from : 'Lägg in ELKS_USER, ELKS_PASS och ELKS_FROM'),
+      item(!!s.owner, 'Vidarebefordra svar till', s.owner || 'Lägg in OWNER_PHONE (ditt mobilnummer)'),
+      item(!!s.repliesConnected, 'Kundsvar kopplade', s.repliesConnected ? fmtWhen(s.repliesConnected) : 'Tryck på knappen nedan när 46elks är klart'),
+      item(true, 'Team', s.team.join(', ')),
+    ), el('div', { class: 'row', style: 'margin-top:12px;flex-wrap:wrap' }, connectB, testB)),
+    el('section', { class: 'card', style: 'margin-top:12px' },
+      el('h3', { style: 'font-size:16px' }, 'Klart-sms'),
+      el('p', { class: 'small muted', style: 'margin:4px 0 0' }, 'Fält som fylls i automatiskt: {namn} (förnamn), {adress}, {tid}.'),
+      el('label', { class: 'f' }, 'Med foto'), tp, el('label', { class: 'f' }, 'Utan foto'), tn,
+      el('button', { class: 'btn primary', style: 'margin-top:12px;width:100%', onclick: async (e) => {
+        const btn = e.currentTarget; btn.disabled = true;
+        try { const r = await api('/api/settings', { method: 'POST', body: { action: 'save', templatePhoto: tp.value, templateNoPhoto: tn.value } }); settingsCache = r.settings; toast('Sparat'); }
+        catch (err) { toast(err.message, true); } btn.disabled = false;
+      } }, 'Spara mallar')),
+    el('button', { class: 'btn ghost', style: 'margin-top:16px;width:100%', onclick: async () => { await api('/api/login', { method: 'DELETE' }); showLogin(); } }, `Logga ut (${d.user})`),
+  );
+  connectB.addEventListener('click', async () => { connectB.disabled = true;
+    try { const r = await api('/api/settings', { method: 'POST', body: { action: 'connect' } }); toast('Kundsvar kopplade till ' + r.number); render(); }
+    catch (e) { toast(e.message, true); connectB.disabled = false; } });
+  testB.addEventListener('click', async () => { testB.disabled = true;
+    try { const r = await api('/api/settings', { method: 'POST', body: { action: 'test' } }); toast(r.result.status === 'sent' ? 'Test-sms skickat till ' + r.to : 'Misslyckades: ' + r.result.note, r.result.status !== 'sent'); }
+    catch (e) { toast(e.message, true); } testB.disabled = false; });
+}
+
+// ---------- start ----------
+document.addEventListener('visibilitychange', () => { if (!document.hidden && S.user) { loadDay(); loadInbox(S.tab === 'inbox'); } });
+api('/api/login').then((d) => d.user ? start(d.user) : showLogin()).catch(() => showLogin());
+})();
+</script>
+</body>
+</html>

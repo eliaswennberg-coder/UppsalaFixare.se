@@ -1,0 +1,10 @@
+{
+  "name": "uppsalafixaren-site",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@upstash/redis": "^1.40.0",
+    "@vercel/blob": "^2.8.2"
+  }
+}
